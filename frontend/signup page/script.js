@@ -11,7 +11,13 @@ submitBtn.addEventListener('click',function(event){
         email:email,
         password:password
     }
-    axios.post('http://localhost:3000/register-user',RegisterUser).then((response)=>{
+    if(name&&email&&password){
+        axios.post('http://localhost:3000/register-user',RegisterUser).then((response)=>{
         console.log(response)
     }).catch(err=>console.log(err))
+    }
+    else{
+        alert('Fill all detail')
+    }
+   
 })
