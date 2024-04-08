@@ -12,6 +12,7 @@ SubmitBtn.addEventListener('click', function (event) {
     
     axios.post(`http://localhost:3000/login-user/${login.email}`, login).then((response) => {
         console.log(response);
+        window.location.href="../main screen/main.html"
     }).catch(err => {
         console.log(err)
     })
