@@ -16,6 +16,7 @@ btn.addEventListener("click", function (event) {
     .post("http://localhost:3000/add-expense", Exp)
     .then((response) => {
       console.log(response);
+      location.reload();
     })
     .catch((Err) => {
       console.log(Err);
@@ -40,17 +41,24 @@ function showUser(expense) {
   const Expense = document.getElementById("Expense");
   const list = document.createElement("li");
   const delBTN = document.createElement("button");
-  list.id=`${expense.id}`
-  console.log(expense.id)
+  list.id = `${expense.id}`;
+  console.log(expense.id);
   delBTN.innerText = "Delete";
   list.textContent = `${expense.money}-${expense.category}-${expense.category} `;
   Expense.appendChild(list);
   list.appendChild(delBTN);
 
-  delBTN.addEventListener('click',function(){
-    axios.delete(`http://localhost:3000/delete-expense/${list.id}`,function(){
-      const child=document.getElementById("list.id");
-      Expense.removeChild(child)
-    })
-  })
+  delBTN.addEventListener("click", function () {
+    axios
+      .delete(`http://localhost:3000/delete-expense/${list.id}`)
+      .then(() => {
+        //const child = document.getElementById("list.id");
+        //Expense.removeChild(child);
+        console.log("rfresh ho raha");
+        location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 }
