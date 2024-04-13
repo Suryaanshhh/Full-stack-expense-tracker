@@ -11,9 +11,9 @@ btn.addEventListener("click", function (event) {
     description: description,
     category: category,
   };
-
+  const token = localStorage.getItem("token")
   axios
-    .post("http://localhost:3000/add-expense", Exp)
+    .post("http://localhost:3000/add-expense" , Exp,{headers:{"Authorisation":token}})
     .then((response) => {
       console.log(response);
       location.reload();
@@ -24,8 +24,13 @@ btn.addEventListener("click", function (event) {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  console.log(token);
   axios
-    .get("http://localhost:3000/get-expense")
+    .get("http://localhost:3000/get-expense", 
+    {
+      headers:{"Authorisation":token},
+    })
     .then((response) => {
       console.log(response);
       for (var i = 0; i < response.data.expenses.length; i++) {
@@ -44,7 +49,7 @@ function showUser(expense) {
   list.id = `${expense.id}`;
   console.log(expense.id);
   delBTN.innerText = "Delete";
-  list.textContent = `${expense.money}-${expense.category}-${expense.category} `;
+  list.textContent = `${expense.money}-${expense.description}-${expense.category} `;
   Expense.appendChild(list);
   list.appendChild(delBTN);
 
@@ -54,7 +59,7 @@ function showUser(expense) {
       .then(() => {
         //const child = document.getElementById("list.id");
         //Expense.removeChild(child);
-        console.log("rfresh ho raha");
+        console.log("refresh ho raha");
         location.reload();
       })
       .catch((err) => {

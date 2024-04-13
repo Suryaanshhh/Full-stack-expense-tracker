@@ -9,7 +9,8 @@ const cors = require('cors');
 app.use(bodyParser.json({ extended: false }));
 app.use(cors());
 app.use(Router)
-
+User.hasMany(Expense);
+Expense.belongsTo(User)
 
 sq.sync()
 

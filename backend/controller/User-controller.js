@@ -2,7 +2,8 @@ const { response } = require("express");
 const User = require("../model/user");
 const Expense = require("../model/expense");
 const bcrypt = require("bcrypt");
-const expenses = require("../model/expense");
+const jwt = require("jsonwebtoken");
+const { where } = require("sequelize");
 
 exports.register = (req, res, next) => {
   const name = req.body.name;
@@ -23,6 +24,10 @@ exports.register = (req, res, next) => {
   });
 };
 
+function generateAccessToken(id) {
+  return jwt.sign({ userId: id }, "magical-key-for-userAuthentication");
+}
+
 exports.Login = (req, res, next) => {
   const email = req.params.email;
   const password = req.body.password;
@@ -38,7 +43,10 @@ exports.Login = (req, res, next) => {
           }
           if (result == true) {
             //console.log(`second pass is ${user[0].password}`);
-            res.status(201).json({ message: "Login Successfull" });
+            res.status(201).json({
+              message: "Login Successfull",
+              token: generateAccessToken(user[0].id),
+            });
           } else {
             res.status(401).json({ message: "Incorrect Password" });
           }
@@ -56,10 +64,12 @@ exports.AddExpense = (req, res, next) => {
   const money = req.body.money;
   const description = req.body.description;
   const category = req.body.category;
+  const uId=req.user.id
   Expense.create({
     money: money,
     description: description,
     category: category,
+    UserId:uId
   })
     .then((data) => {
       console.log(data);
@@ -71,7 +81,7 @@ exports.AddExpense = (req, res, next) => {
 };
 
 exports.ShowExpense = (req, res, next) => {
-  Expense.findAll()
+  Expense.findAll({ where: { userId: req.user.id } })
     .then((expenses) => {
       console.log(expenses);
       res.status(201).json({ expenses });
