@@ -11,6 +11,10 @@ Router.post('/add-expense',userAuthenticator.authenticator,UserControll.AddExpen
 
 Router.get('/get-expense' ,userAuthenticator.authenticator , UserControll.ShowExpense);
 
-Router.delete('/delete-expense/:id',UserControll.DeleteExpense)
+Router.delete('/delete-expense/:id',UserControll.DeleteExpense);
+
+Router.use('/Premium-Membership',userAuthenticator.authenticator,UserControll.PurchasePremium);
+
+Router.post('/Transaction-Status',userAuthenticator.authenticator,UserControll.UpdateTransactionStatus);
 
 module.exports=Router;

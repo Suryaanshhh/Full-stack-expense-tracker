@@ -1,3 +1,4 @@
+
 const btn = document.getElementById("submit");
 
 btn.addEventListener("click", function (event) {
@@ -11,9 +12,11 @@ btn.addEventListener("click", function (event) {
     description: description,
     category: category,
   };
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   axios
-    .post("http://localhost:3000/add-expense" , Exp,{headers:{"Authorisation":token}})
+    .post("http://localhost:3000/add-expense", Exp, {
+      headers: { Authorisation: token },
+    })
     .then((response) => {
       console.log(response);
       location.reload();
@@ -27,9 +30,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
   console.log(token);
   axios
-    .get("http://localhost:3000/get-expense", 
-    {
-      headers:{"Authorisation":token},
+    .get("http://localhost:3000/get-expense", {
+      headers: { Authorisation: token },
     })
     .then((response) => {
       console.log(response);
@@ -67,3 +69,43 @@ function showUser(expense) {
       });
   });
 }
+
+const Premium = document.getElementById("Buy");
+
+Premium.addEventListener("click", function (event) {
+  const token = localStorage.getItem("token");
+  axios
+    .get("http://localhost:3000/Premium-Membership", {
+      headers: { Authorisation: token },
+    })
+    .then((response) => {
+      console.log("jhatu code")
+      console.log(response);
+      var options = {
+        "key": response.data.key_id,
+        "order_id": response.data.order.id,
+        "handler": function (response) {
+          axios
+            .post(
+              "http://localhost:3000/Transaction-Status",
+              {
+                order_id: options.order_id,
+                payment_id: response.razorpay_payment_id,
+              },
+              { headers: { Authorisation: token } }
+            )
+            .then(() => {
+              alert("You are premium user now");
+            }).catch(err=>{
+              console.log(err)
+            });
+        },
+      };
+      const RazorPay=new Razorpay(options);
+    RazorPay.open()
+    }).catch(err=>{
+      console.log(err)
+    });
+    event.preventDefault();
+    
+});

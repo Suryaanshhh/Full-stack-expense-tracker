@@ -4,6 +4,8 @@ const Expense = require("../model/expense");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { where } = require("sequelize");
+const RazorPay = require("razorpay");
+const Order = require("../model/orders");
 
 exports.register = (req, res, next) => {
   const name = req.body.name;
@@ -17,7 +19,7 @@ exports.register = (req, res, next) => {
       password: hash,
     })
       .then((data) => {
-        console.log(data);
+        //console.log(data);
         res.status(201).json({ User: data });
       })
       .catch((err) => console.log(err));
@@ -64,15 +66,15 @@ exports.AddExpense = (req, res, next) => {
   const money = req.body.money;
   const description = req.body.description;
   const category = req.body.category;
-  const uId=req.user.id
+  const uId = req.user.id;
   Expense.create({
     money: money,
     description: description,
     category: category,
-    UserId:uId
+    UserId: uId,
   })
     .then((data) => {
-      console.log(data);
+      //console.log(data);
       res.status(201).json({ Expense: data });
     })
     .catch((err) => {
@@ -83,7 +85,7 @@ exports.AddExpense = (req, res, next) => {
 exports.ShowExpense = (req, res, next) => {
   Expense.findAll({ where: { userId: req.user.id } })
     .then((expenses) => {
-      console.log(expenses);
+      //console.log(expenses);
       res.status(201).json({ expenses });
     })
     .catch((err) => {
@@ -93,11 +95,56 @@ exports.ShowExpense = (req, res, next) => {
 
 exports.DeleteExpense = (req, res, next) => {
   const uId = req.params.id;
-  console.log(uId);
+  //console.log(uId);
   Expense.destroy({ where: { id: uId } })
     .then((result) => {
-      console.log(result);
+      //console.log(result);
       res.status(201).json({ message: "Successfull" });
     })
     .catch((err) => console.log(err));
+};
+
+exports.PurchasePremium = (req, res, next) => {
+  const uId = req.user.id;
+  try {
+    var rzp = new RazorPay({
+      key_id: "rzp_test_nCkCg1Y7qkqxCd",
+      key_secret: "c6ij1T3cfBBejHRgAYLU2x8d",
+    });
+    const amount = 6900;
+    rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
+      if(err){
+        throw new Error(JSON.stringify(err))
+      }
+      console.log(`premium purchse==${order}`)
+      Order.create({ orderId: order.id, status: "PENDING" ,UserId:uId})
+        .then(() => {
+          console.log(`chal le bsdk ${order,rzp.key_id}`)
+          return res.status(201).json({ order, key_id: rzp.key_id });
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(403).json({message:"Something went wrong",error:err})
+  }
+};
+
+exports.UpdateTransactionStatus = (req, res) => {
+  const { payment_id, order_id } = req.body;
+  Order.findOne({ where: { orderId: order_id } }).then((order) => {
+    order.update({ paymentId: payment_id, status: "Successfull" }).then(() => {
+      req.User.update({ premium: true })
+        .then(() => {
+          res
+            .status(202)
+            .json({ success: true, message: "Transaction Completed" });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  });
 };

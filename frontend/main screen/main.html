@@ -11,8 +11,8 @@
   </head>
 
   <body class="bg-gray-900 text-white">
-    <div class="max-w-md mx-auto p-8">
-      <form>
+    <div class="max-w-md mx-auto p-8 relative">
+      <form class="relative">
         <div class="mb-4">
           <label for="money" class="block mb-2">Amount:</label>
           <input
@@ -40,24 +40,30 @@
             <option>Rent</option>
           </select>
         </div>
-        <button
-          type="submit"
-          id="submit"
-          class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none"
-        >
-          Add Expense
-        </button>
+        <div class="flex justify-between items-center">
+          <button
+            type="submit"
+            id="submit"
+            class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none mr-2"
+          >
+            Add Expense
+          </button>
+          <button
+            id="Buy"
+            class="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 focus:outline-none"
+          >
+            Buy Premium
+          </button>
+        </div>
       </form>
 
       <div class="mt-6 bg-gray-800 rounded-lg p-4">
         <h3 class="text-xl font-semibold mb-4">Expenses</h3>
-        <ul id="Expense">
-          <!-- Expense items will be dynamically added here -->
-        </ul>
+        <ul id="Expense"></ul>
       </div>
     </div>
-
-    <script src="main.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
