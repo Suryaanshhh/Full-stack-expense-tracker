@@ -4,35 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="main">
-        <form class="form">
-            <h2>Don't Have Account ?</h2>
-            <div class="input-name">
-                <label for="name">Your Name:</label>
-                <input type="text" id="name" placeholder=" Enter your name">
+<body class="bg-gray-900 flex items-center justify-center h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-80">
+        <form class="text-gray-300" id="signup-form">
+            <h2 class="text-2xl font-semibold mb-6">Don't Have Account?</h2>
+            <div class="mb-4">
+                <label for="name" class="block mb-1">Your Name:</label>
+                <input type="text" id="name" placeholder="Enter your name" class="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
             </div>
-            <div class="input-email">
-                <label for="email">Your Email:</label>
-                <input type="email" id="email" placeholder=" Enter your email">
+            <div class="mb-4">
+                <label for="email" class="block mb-1">Your Email:</label>
+                <input type="email" id="email" placeholder="Enter your email" class="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
             </div>
-            <div class="input-password">
-                <label for="password">Your password:</label>
-                <input type="text" id="password" placeholder=" Enter your password">
-                <br>
-                <button class="signup" id="submit" type="submit">Sign Up</button>
-                <br>
-                <p>
-                    Already Have an account ?
-                    <a href="http://127.0.0.1:3000/frontend/login page/login.html">Login Here</a>
-                </p>
+            <div class="mb-6">
+                <label for="password" class="block mb-1">Your Password:</label>
+                <input type="password" id="password" placeholder="Enter your password" class="w-full bg-gray-700 border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-blue-500">
+            </div>
+            <button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none" id="submit" type="submit">Sign Up</button>
+            <p class="mt-4 text-sm">Already have an account? <a href="http://127.0.0.1:3000/frontend/login page/login.html" class="text-blue-400 hover:text-blue-300">Login Here</a></p>
         </form>
     </div>
-    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
     <script src="script.js"></script>
 </body>
