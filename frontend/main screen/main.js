@@ -1,4 +1,3 @@
-
 const btn = document.getElementById("submit");
 
 btn.addEventListener("click", function (event) {
@@ -79,12 +78,12 @@ Premium.addEventListener("click", function (event) {
       headers: { Authorisation: token },
     })
     .then((response) => {
-      console.log("jhatu code")
+      console.log("jhatu code");
       console.log(response);
       var options = {
-        "key": response.data.key_id,
-        "order_id": response.data.order.id,
-        "handler": function (response) {
+        key: response.data.key_id,
+        order_id: response.data.order.id,
+        handler: function (response) {
           axios
             .post(
               "http://localhost:3000/Transaction-Status",
@@ -96,16 +95,23 @@ Premium.addEventListener("click", function (event) {
             )
             .then(() => {
               alert("You are premium user now");
-            }).catch(err=>{
-              console.log(err)
+              //console.log("remove ho jao")
+              Premium.remove();
+            })
+            .catch((err) => {
+              console.log(err);
             });
         },
       };
-      const RazorPay=new Razorpay(options);
-    RazorPay.open()
-    }).catch(err=>{
-      console.log(err)
+      const Razor = new Razorpay(options);
+      Razor.open();
+      Razor.on("payment.failed", function () {
+        alert("Something went wrong");
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-    event.preventDefault();
-    
+ 
+  event.preventDefault();
 });

@@ -133,18 +133,25 @@ exports.PurchasePremium = (req, res, next) => {
 };
 
 exports.UpdateTransactionStatus = (req, res) => {
-  const { payment_id, order_id } = req.body;
-  Order.findOne({ where: { orderId: order_id } }).then((order) => {
-    order.update({ paymentId: payment_id, status: "Successfull" }).then(() => {
-      req.User.update({ premium: true })
-        .then(() => {
-          res
-            .status(202)
-            .json({ success: true, message: "Transaction Completed" });
+  try{
+    const uId = req.user.id;
+    const{payment_id,order_id}=req.body;
+    Order.findOne({where:{orderId:order_id}}).then(order=>{
+      order.update({paymentId:payment_id,staus:"SUCCESSFULL"}).then(()=>{
+        User.update({premium:true},{where:{id:uId}}).then(()=>{
+          return res.status(202).json({success:true,message:"Transaction completed"})
+        }).catch(err=>{
+          console.log(err)
         })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-  });
-};
+      }).catch(err=>{
+        console.log(err)
+      })
+    }).catch(err=>{
+      console.log(err)
+    })
+  }
+  catch(err){
+    console.log(err)
+  }
+  };
+  
