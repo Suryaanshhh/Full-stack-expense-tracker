@@ -136,8 +136,8 @@ exports.UpdateTransactionStatus = (req, res) => {
   try{
     const uId = req.user.id;
     const{payment_id,order_id}=req.body;
-    Order.findOne({where:{orderId:order_id}}).then(order=>{
-      order.update({paymentId:payment_id,staus:"SUCCESSFULL"}).then(()=>{
+    Order.findOne({where:{orderId:order_id}}).then((order)=>{
+      order.update({paymentId:payment_id,status:"SUCCESSFULL"}).then(()=>{
         User.update({premium:true},{where:{id:uId}}).then(()=>{
           return res.status(202).json({success:true,message:"Transaction completed"})
         }).catch(err=>{
