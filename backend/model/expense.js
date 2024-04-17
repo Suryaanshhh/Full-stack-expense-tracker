@@ -10,7 +10,7 @@ const expenses = sq.define("expenses", {
     primaryKey: true,
   },
   money: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     allowNull: false,
   },
   description: {

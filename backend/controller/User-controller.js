@@ -26,8 +26,8 @@ exports.register = (req, res, next) => {
   });
 };
 
-function generateAccessToken(id) {
-  return jwt.sign({ userId: id }, "magical-key-for-userAuthentication");
+function generateAccessToken(id,premium) {
+  return jwt.sign({ userId: id ,premium }, "magical-key-for-userAuthentication");
 }
 
 exports.Login = (req, res, next) => {
@@ -47,7 +47,7 @@ exports.Login = (req, res, next) => {
             //console.log(`second pass is ${user[0].password}`);
             res.status(201).json({
               message: "Login Successfull",
-              token: generateAccessToken(user[0].id),
+              token: generateAccessToken(user[0].id,user[0].premium),
             });
           } else {
             res.status(401).json({ message: "Incorrect Password" });
@@ -116,10 +116,10 @@ exports.PurchasePremium = (req, res, next) => {
       if(err){
         throw new Error(JSON.stringify(err))
       }
-      console.log(`premium purchse==${order}`)
+      //console.log(`premium purchse==${order}`)
       Order.create({ orderId: order.id, status: "PENDING" ,UserId:uId})
         .then(() => {
-          console.log(`chal le bsdk ${order,rzp.key_id}`)
+          //console.log(`chal le bewkoof code ${order,rzp.key_id}`)
           return res.status(201).json({ order, key_id: rzp.key_id });
         })
         .catch((err) => {
@@ -139,7 +139,7 @@ exports.UpdateTransactionStatus = (req, res) => {
     Order.findOne({where:{orderId:order_id}}).then((order)=>{
       order.update({paymentId:payment_id,status:"SUCCESSFULL"}).then(()=>{
         User.update({premium:true},{where:{id:uId}}).then(()=>{
-          return res.status(202).json({success:true,message:"Transaction completed"})
+          return res.status(202).json({success:true,message:"Transaction completed",token:generateAccessToken(uId,true)})
         }).catch(err=>{
           console.log(err)
         })
