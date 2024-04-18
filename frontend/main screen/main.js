@@ -32,7 +32,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const Ispremium = decodeToken.premium;
   if (Ispremium) {
     premiumUserUi();
-    showLeaderBoard()
+    showLeaderBoard();
   }
   axios
     .get("http://localhost:3000/get-expense", {
@@ -63,6 +63,22 @@ function showUser(expense) {
   list.id = `${expense.id}`;
   console.log(expense.id);
   delBTN.innerText = "Delete";
+  delBTN.style.color = "lightgray";
+
+  delBTN.style.backgroundColor = "transparent";
+
+  delBTN.style.border = "1px solid lightgray";
+
+  delBTN.style.cursor = "pointer"; 
+
+  delBTN.style.padding = "5px 10px";
+  delBTN.style.margin = "5px";
+  delBTN.addEventListener("mouseover", function () {
+    this.style.border = "1px solid darkgray";
+  });
+  delBTN.addEventListener("mouseout", function () {
+    this.style.border = "1px solid lightgray";
+  });
   list.textContent = `${expense.money}-${expense.description}-${expense.category} `;
   Expense.appendChild(list);
   list.appendChild(delBTN);
@@ -111,7 +127,7 @@ Premium.addEventListener("click", function (event) {
               premiumUserUi();
               //console.log("remove ho jao")
               localStorage.setItem("token", response.data.token);
-              showLeaderBoard()
+              showLeaderBoard();
             })
             .catch((err) => {
               console.log(err);
@@ -148,22 +164,37 @@ function parseJwt(token) {
 }
 
 function showLeaderBoard() {
- const BTN = document.createElement("button");
- BTN.id="pre"
+  const BTN = document.createElement("button");
+  BTN.id = "pre";
   BTN.textContent = "Show Leaderboard";
+  BTN.style.backgroundColor = "#333";
+  BTN.style.color = "#fff";
+  BTN.style.border = "thin solid cyan";
+  BTN.style.borderRadius = "5px";
+  BTN.style.padding = "10px 20px";
+  BTN.style.margin = "10px";
+  BTN.style.cursor = "pointer";
+  document.getElementById("pre").appendChild(BTN);
   BTN.onclick = async () => {
     const token = localStorage.getItem("token");
-    const LeaderboardArray = await axios.get(
-      "http://localhost:3000/showLeaderBoard",
-      { headers: { Authorisation: token } }
-    );
-    console.log(LeaderboardArray);
-    const main = document.getElementById("leaderboard");
-    main.innerHTML = `<h1>Leader Board</h1>`;
-    LeaderboardArray.data.forEach((userDetails) => {
-      console.log(userDetails)
-      main.innerHTML = `<li>Name-${userDetails.name} Total Expenses-${userDetails.totalCost} <li/>`;
-    });
+    try {
+      const LeaderboardArray = await axios.get(
+        "http://localhost:3000/showLeaderBoard",
+        { headers: { Authorisation: token } }
+      );
+      console.log(LeaderboardArray);
+      const main = document.getElementById("leaderboard");
+      main.innerHTML = `<h1>Leader Board</h1>`;
+      let usersHTML = "";
+      LeaderboardArray.data.forEach((userDetails) => {
+        console.log(userDetails);
+
+        usersHTML += `<li>Name-${userDetails.name} Total Expenses-${userDetails.totalCost}</li>`;
+      });
+
+      main.innerHTML += usersHTML;
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+    }
   };
-  document.getElementById("pre").appendChild(BTN)
 }
