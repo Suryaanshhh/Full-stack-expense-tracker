@@ -17,6 +17,7 @@ exports.register = (req, res, next) => {
       name: name,
       email: email,
       password: hash,
+      total: 0,
     })
       .then((data) => {
         //console.log(data);
@@ -26,8 +27,11 @@ exports.register = (req, res, next) => {
   });
 };
 
-function generateAccessToken(id,premium) {
-  return jwt.sign({ userId: id ,premium }, "magical-key-for-userAuthentication");
+function generateAccessToken(id, premium) {
+  return jwt.sign(
+    { userId: id, premium },
+    "magical-key-for-userAuthentication"
+  );
 }
 
 exports.Login = (req, res, next) => {
@@ -47,7 +51,7 @@ exports.Login = (req, res, next) => {
             //console.log(`second pass is ${user[0].password}`);
             res.status(201).json({
               message: "Login Successfull",
-              token: generateAccessToken(user[0].id,user[0].premium),
+              token: generateAccessToken(user[0].id, user[0].premium),
             });
           } else {
             res.status(401).json({ message: "Incorrect Password" });
@@ -62,24 +66,31 @@ exports.Login = (req, res, next) => {
     });
 };
 
-exports.AddExpense = (req, res, next) => {
-  const money = req.body.money;
-  const description = req.body.description;
-  const category = req.body.category;
-  const uId = req.user.id;
-  Expense.create({
-    money: money,
-    description: description,
-    category: category,
-    UserId: uId,
-  })
-    .then((data) => {
-      //console.log(data);
-      res.status(201).json({ Expense: data });
-    })
-    .catch((err) => {
-      console.log(err);
+exports.AddExpense = async (req, res, next) => {
+  try {
+    const money = req.body.money;
+    const description = req.body.description;
+    const category = req.body.category;
+    const uId = req.user.id;
+    const data = await Expense.create({
+      money: money,
+      description: description,
+      category: category,
+      UserId: uId,
     });
+
+   
+    const existingUser = await User.findOne({ where: { id: uId } });
+
+    if (existingUser) {
+      existingUser.total= existingUser.total + parseInt(money);
+      await User.update({ total: existingUser.total }, { where: { id: uId } });
+      
+    }
+    res.status(201).json({ Expense: data });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.ShowExpense = (req, res, next) => {
@@ -113,11 +124,11 @@ exports.PurchasePremium = (req, res, next) => {
     });
     const amount = 6900;
     rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
-      if(err){
-        throw new Error(JSON.stringify(err))
+      if (err) {
+        throw new Error(JSON.stringify(err));
       }
       //console.log(`premium purchse==${order}`)
-      Order.create({ orderId: order.id, status: "PENDING" ,UserId:uId})
+      Order.create({ orderId: order.id, status: "PENDING", UserId: uId })
         .then(() => {
           //console.log(`chal le bewkoof code ${order,rzp.key_id}`)
           return res.status(201).json({ order, key_id: rzp.key_id });
@@ -128,30 +139,39 @@ exports.PurchasePremium = (req, res, next) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(403).json({message:"Something went wrong",error:err})
+    res.status(403).json({ message: "Something went wrong", error: err });
   }
 };
 
 exports.UpdateTransactionStatus = (req, res) => {
-  try{
+  try {
     const uId = req.user.id;
-    const{payment_id,order_id}=req.body;
-    Order.findOne({where:{orderId:order_id}}).then((order)=>{
-      order.update({paymentId:payment_id,status:"SUCCESSFULL"}).then(()=>{
-        User.update({premium:true},{where:{id:uId}}).then(()=>{
-          return res.status(202).json({success:true,message:"Transaction completed",token:generateAccessToken(uId,true)})
-        }).catch(err=>{
-          console.log(err)
-        })
-      }).catch(err=>{
-        console.log(err)
+    const { payment_id, order_id } = req.body;
+    Order.findOne({ where: { orderId: order_id } })
+      .then((order) => {
+        order
+          .update({ paymentId: payment_id, status: "SUCCESSFULL" })
+          .then(() => {
+            User.update({ premium: true }, { where: { id: uId } })
+              .then(() => {
+                return res.status(202).json({
+                  success: true,
+                  message: "Transaction completed",
+                  token: generateAccessToken(uId, true),
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
-    }).catch(err=>{
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err);
+      });
+  } catch (err) {
+    console.log(err);
   }
-  catch(err){
-    console.log(err)
-  }
-  };
-  
+};

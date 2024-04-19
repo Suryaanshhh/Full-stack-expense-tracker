@@ -189,7 +189,7 @@ function showLeaderBoard() {
       LeaderboardArray.data.forEach((userDetails) => {
         console.log(userDetails);
 
-        usersHTML += `<li>Name-${userDetails.name} Total Expenses-${userDetails.totalCost}</li>`;
+        usersHTML += `<li>Name-${userDetails.name} Total Expenses-${userDetails.total}</li>`;
       });
 
       main.innerHTML += usersHTML;
