@@ -3,9 +3,10 @@ const User = require("../model/user");
 const Expense = require("../model/expense");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { where } = require("sequelize");
+const { where, Sequelize } = require("sequelize");
 const RazorPay = require("razorpay");
 const Order = require("../model/orders");
+const sequelize = require("../util/database");
 
 exports.register = (req, res, next) => {
   const name = req.body.name;
@@ -67,28 +68,36 @@ exports.Login = (req, res, next) => {
 };
 
 exports.AddExpense = async (req, res, next) => {
+  const t = await sequelize.transaction();
   try {
     const money = req.body.money;
     const description = req.body.description;
     const category = req.body.category;
     const uId = req.user.id;
-    const data = await Expense.create({
-      money: money,
-      description: description,
-      category: category,
-      UserId: uId,
+    const data = await Expense.create(
+      {
+        money: money,
+        description: description,
+        category: category,
+        UserId: uId,
+      },
+      { transaction: t }
+    );
+    const existingUser = await User.findOne({
+      where: { id: uId },
     });
-
-   
-    const existingUser = await User.findOne({ where: { id: uId } });
-
     if (existingUser) {
-      existingUser.total= existingUser.total + parseInt(money);
-      await User.update({ total: existingUser.total }, { where: { id: uId } });
-      
+      existingUser.total = existingUser.total + parseInt(money);
+      await User.update(
+        { total: existingUser.total },
+        { where: { id: uId }, transaction: t }
+      );
+      await t.commit();
     }
+
     res.status(201).json({ Expense: data });
   } catch (err) {
+    await t.rollback();
     console.log(err);
   }
 };
@@ -104,16 +113,38 @@ exports.ShowExpense = (req, res, next) => {
     });
 };
 
-exports.DeleteExpense = (req, res, next) => {
-  const uId = req.params.id;
-  //console.log(uId);
-  Expense.destroy({ where: { id: uId } })
-    .then((result) => {
-      //console.log(result);
-      res.status(201).json({ message: "Successfull" });
-    })
-    .catch((err) => console.log(err));
+exports.DeleteExpense = async (req, res, next) => {
+  const t=await sequelize.transaction()
+  try {
+    const uId = req.params.id;
+
+    const expense = await Expense.findOne({ where: { id: uId } });
+    if (!expense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+
+    const expenseAmount = expense.money;
+
+    const user = await User.findOne({ where: { id: expense.UserId } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const updatedTotal = user.total - expenseAmount;
+
+    await User.update({ total: updatedTotal }, { where: { id: user.id },transaction:t });
+
+    await Expense.destroy({ where: { id: uId } ,transaction:t});
+    await t.commit()
+
+    res.status(200).json({ message: "Expense deleted successfully" });
+  } catch (err) {
+    await t.rollback()
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
+
 
 exports.PurchasePremium = (req, res, next) => {
   const uId = req.user.id;
