@@ -2,7 +2,8 @@ const express=require('express');
 const Router =express.Router()
 const UserControll=require('../controller/User-controller');
 const userAuthenticator=require('../middleware/auth');
-const Premium=require('../controller/premium-controller')
+const Premium=require('../controller/premium-controller');
+const ForgetPassword=require('../controller/passController');
 
 Router.post('/register-user',UserControll.register);
 
@@ -18,6 +19,8 @@ Router.use('/Premium-Membership',userAuthenticator.authenticator,UserControll.Pu
 
 Router.post('/Transaction-Status',userAuthenticator.authenticator,UserControll.UpdateTransactionStatus);
 
-Router.get('/showLeaderBoard',userAuthenticator.authenticator,Premium.ShowLeaderBoard)
+Router.get('/showLeaderBoard',userAuthenticator.authenticator,Premium.ShowLeaderBoard);
+
+Router.post('/forget-password',ForgetPassword.forgetPassword);
 
 module.exports=Router;
