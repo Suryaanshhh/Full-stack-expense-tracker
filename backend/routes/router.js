@@ -21,6 +21,10 @@ Router.post('/Transaction-Status',userAuthenticator.authenticator,UserControll.U
 
 Router.get('/showLeaderBoard',userAuthenticator.authenticator,Premium.ShowLeaderBoard);
 
-Router.post('/forget-password',ForgetPassword.forgetPassword);
+Router.post('/forget-password',userAuthenticator.authenticator,ForgetPassword.forgetPassword);
+
+Router.get('/reset-password/:uid',ForgetPassword.resetpassword);
+
+Router.get('/updatepassword/:resetpasswordid',ForgetPassword.updatepassword)
 
 module.exports=Router;
