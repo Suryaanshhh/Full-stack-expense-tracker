@@ -7,6 +7,8 @@ const { where, Sequelize } = require("sequelize");
 const RazorPay = require("razorpay");
 const Order = require("../model/orders");
 const sequelize = require("../util/database");
+const { Body } = require("sib-api-v3-sdk");
+const S3Service = require("../service/s3");
 
 exports.register = (req, res, next) => {
   const name = req.body.name;
@@ -114,7 +116,7 @@ exports.ShowExpense = (req, res, next) => {
 };
 
 exports.DeleteExpense = async (req, res, next) => {
-  const t=await sequelize.transaction()
+  const t = await sequelize.transaction();
   try {
     const uId = req.params.id;
 
@@ -132,19 +134,21 @@ exports.DeleteExpense = async (req, res, next) => {
 
     const updatedTotal = user.total - expenseAmount;
 
-    await User.update({ total: updatedTotal }, { where: { id: user.id },transaction:t });
+    await User.update(
+      { total: updatedTotal },
+      { where: { id: user.id }, transaction: t }
+    );
 
-    await Expense.destroy({ where: { id: uId } ,transaction:t});
-    await t.commit()
+    await Expense.destroy({ where: { id: uId }, transaction: t });
+    await t.commit();
 
     res.status(200).json({ message: "Expense deleted successfully" });
   } catch (err) {
-    await t.rollback()
+    await t.rollback();
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 exports.PurchasePremium = (req, res, next) => {
   const uId = req.user.id;
@@ -204,5 +208,20 @@ exports.UpdateTransactionStatus = (req, res) => {
       });
   } catch (err) {
     console.log(err);
+  }
+};
+
+exports.downloadExpense = async (req, res) => {
+  try {
+    const expenses = await req.user.getExpenses();
+    console.log(expenses);
+    const stringifyExpenses = JSON.stringify(expenses);
+    const userID = req.user.id;
+    const filename = `Expenses${userID}/${new Date()}.txt`;
+    const fileURl = await S3Service.uploadtoS3(stringifyExpenses, filename);
+    res.status(200).json({ fileURl });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: err });
   }
 };
