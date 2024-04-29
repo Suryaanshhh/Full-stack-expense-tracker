@@ -5,6 +5,7 @@ const User=require('./backend/model/user')
 const Expense=require('./backend/model/expense')
 const Order=require('./backend/model/orders')
 const Request=require('./backend/model/ForgotPasswordRequests')
+const FileUrl=require('./backend/model/fileUrl')
 const Router = require('./backend/routes/router')
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -16,7 +17,9 @@ Expense.belongsTo(User)
 User.hasMany(Order);
 Order.belongsTo(User);
 User.hasMany(Request);
-Request.belongsTo(User)
+Request.belongsTo(User);
+User.hasMany(FileUrl);
+FileUrl.belongsTo(User)
 sq.sync()
 
 app.listen(3000);

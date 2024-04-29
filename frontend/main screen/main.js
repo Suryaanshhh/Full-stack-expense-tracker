@@ -1,3 +1,5 @@
+
+
 const btn = document.getElementById("submit");
 
 btn.addEventListener("click", function (event) {
@@ -25,7 +27,7 @@ btn.addEventListener("click", function (event) {
     });
 });
 window.addEventListener("DOMContentLoaded", () => {
- const token=localStorage.getItem("token")
+  const token = localStorage.getItem("token");
   //console.log(token);
   const decodeToken = parseJwt(token);
   //console.log(decodeToken);
@@ -52,7 +54,7 @@ window.addEventListener("DOMContentLoaded", () => {
 function premiumUserUi() {
   const premiumButton = document.getElementById("Buy");
   premiumButton.remove();
-  
+
   const message = document.getElementById("message");
   message.textContent = "You are a Premium User";
 
@@ -74,15 +76,15 @@ function premiumUserUi() {
   form.appendChild(downloadButton);
 
   document.getElementById("downloadExpenses").onclick = async function (e) {
-    e.preventDefault()
-    const token=localStorage.getItem("token")
+    e.preventDefault();
+    const token = localStorage.getItem("token");
     await axios
       .get("http://localhost:3000/download-expense", {
-        headers: { Authorisation: token},
+        headers: { Authorisation: token },
       })
       .then((response) => {
-        console.log(response)
-        
+        console.log(response);
+
         if (response.status == 200) {
           var a = document.createElement("a");
           a.href = response.data.fileURl;
@@ -93,8 +95,29 @@ function premiumUserUi() {
         }
       })
       .catch(console.log);
+    axios
+      .get("http://localhost:3000/get-url", {
+        headers: { Authorisation: token },
+      })
+      .then((result) => {
+        for(var j=0; j<result.data.Link.length; j++){
+          showUrl(result.data.Link[j])
+        }
+      }); 
   };
 }
+
+function showUrl(Links){
+  const parent=document.getElementById('listofUrl');
+  console.log(parent)
+const child=document.createElement('li');
+const CloseBtn=document.createElement('button');
+CloseBtn.innerText="Close";
+child.textContent=`Already Downloaded -${Links.Link}`;
+parent.appendChild(child);
+parent.appendChild(CloseBtn)
+}
+
 
 function showUser(expense) {
   const Expense = document.getElementById("Expense");

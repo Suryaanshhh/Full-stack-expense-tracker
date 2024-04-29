@@ -9,6 +9,7 @@ const Order = require("../model/orders");
 const sequelize = require("../util/database");
 const { Body } = require("sib-api-v3-sdk");
 const S3Service = require("../service/s3");
+const Links=require('../model/fileUrl')
 
 exports.register = (req, res, next) => {
   const name = req.body.name;
@@ -219,9 +220,25 @@ exports.downloadExpense = async (req, res) => {
     const userID = req.user.id;
     const filename = `Expenses${userID}/${new Date()}.txt`;
     const fileURl = await S3Service.uploadtoS3(stringifyExpenses, filename);
+    Links.create({
+      Link:fileURl,
+      UserId:userID 
+    })
     res.status(200).json({ fileURl });
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: err });
   }
 };
+
+
+exports.getUrl=(req,res)=>{
+  Links.findAll({ where: { UserId: req.user.id } })
+    .then((Link) => {
+      console.log(`link is ----.>${Link}`);
+      res.status(201).json({Link});
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}

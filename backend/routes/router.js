@@ -27,6 +27,8 @@ Router.get('/reset-password/:uid',ForgetPassword.resetpassword);
 
 Router.get('/updatepassword/:resetpasswordid',ForgetPassword.updatepassword);
 
-Router.get('/download-expense',userAuthenticator.authenticator,UserControll.downloadExpense)
+Router.get('/download-expense',userAuthenticator.authenticator,UserControll.downloadExpense);
+
+Router.get('/get-url',userAuthenticator.authenticator,UserControll.getUrl);
 
 module.exports=Router;
