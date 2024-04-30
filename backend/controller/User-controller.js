@@ -105,10 +105,10 @@ exports.AddExpense = async (req, res, next) => {
   }
 };
 
-User
 exports.ShowExpense = async (req, res, next) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = 2;
+  const limit = parseInt(req.query.count)||2;
+  console.log(limit);
 
   const { count, rows: expenses } = await Expense.findAndCountAll({
     where: { userId: req.user.id },

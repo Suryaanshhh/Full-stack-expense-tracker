@@ -59,16 +59,30 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function fetchExpenses(page) {
+    console.log(page);
+    const count= localStorage.getItem("NoOfexpenses");
+    //console.log(count)
     Expense.innerHTML = "";
     axios
-      .get(`http://localhost:3000/get-expense?page=${page}`, {
-        headers: { Authorisation: token },
-      })
+      .get(
+        `http://localhost:3000/get-expense?page=${page}&count=${count}`,
+        {
+          headers: { Authorisation: token },
+        }
+      )
       .then((response) => {
         console.log(response);
+        console.log(count)
         paginationDiv.innerHTML = "";
         let data = response.data;
-
+        const pageCount = document.getElementById("pageCount");
+        pageCount.addEventListener("change", (e) => {
+          e.preventDefault()
+          const NoOfExpense = e.target.value;
+          //console.log(NoOfExpense);
+          localStorage.setItem("NoOfexpenses", NoOfExpense);
+          fetchExpenses(pageNumber);
+        });
         for (let i = 1; i <= data.lastPage; i++) {
           const pageButton = createPaginationButton(i, function () {
             pageNumber = i;
@@ -94,7 +108,7 @@ function premiumUserUi() {
   premiumButton.remove();
 
   const message = document.getElementById("message");
-  message.textContent = "You are a Premium User";
+ // message.textContent = "You are a Premium User";
 
   const downloadButton = document.createElement("button");
   downloadButton.id = "downloadExpenses";
@@ -132,9 +146,9 @@ function premiumUserUi() {
           throw new Error("Server Error");
         }
       })
-      .catch(err=>{
-        console.log(err)
-      })
+      .catch((err) => {
+        console.log(err);
+      });
     axios
       .get("http://localhost:3000/get-url", {
         headers: { Authorisation: token },
