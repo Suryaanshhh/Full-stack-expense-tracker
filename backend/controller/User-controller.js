@@ -105,16 +105,32 @@ exports.AddExpense = async (req, res, next) => {
   }
 };
 
-exports.ShowExpense = (req, res, next) => {
-  Expense.findAll({ where: { userId: req.user.id } })
-    .then((expenses) => {
-      //console.log(expenses);
-      res.status(201).json({ expenses });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+User
+exports.ShowExpense = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 2;
+
+  const { count, rows: expenses } = await Expense.findAndCountAll({
+    where: { userId: req.user.id },
+    limit,
+    offset: (page - 1) * limit,
+    order: [["createdAt"]],
+  });
+
+  const totalPages = Math.ceil(count / limit);
+
+  res.status(200).json({
+    currentPage: page,
+    hasPreviousPage: page > 1,
+    hasNextPage: page < totalPages,
+    lastPage: totalPages,
+    nextPage: page < totalPages ? page + 1 : null,
+    previousPage: page > 1 ? page - 1 : null,
+    totalCount: count,
+    expenses,
+  });
+}
+
 
 exports.DeleteExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
