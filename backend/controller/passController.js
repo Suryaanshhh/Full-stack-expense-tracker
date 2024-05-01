@@ -6,15 +6,20 @@ const bcrypt = require("bcrypt");
 const User = require("../model/user");
 const ForgetPassword = require("../model/ForgotPasswordRequests");
 
-exports.forgetPassword = (req, res) => {
+exports.forgetPassword = async (req, res) => {
   const mail = req.body.mail;
-  console.log(mail)
+  const user = await User.findOne({ where: { email:mail } });
+  if (!user) {
+    return res.status(404).json({
+      message: "This Email is not registered",
+    });
+  }
+  console.log(mail);
   const client = Sib.ApiClient.instance;
-
+  
   const apiKey = client.authentications["api-key"];
 
-  apiKey.apiKey =
-    "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";
+  apiKey.apiKey =process.env.SIB_API_KEY;
 
   const TranEmailApi = new Sib.TransactionalEmailsApi();
 
@@ -27,10 +32,11 @@ exports.forgetPassword = (req, res) => {
     },
   ];
   const uid = uuidv4();
-  const UId = req.user.id;
+  const UId = user.dataValues.id
+  console.log(`id is -------${UId}`);
   ForgetPassword.create({
     id: uid,
-    UserId: UId,
+   UserId: UId,
     active: true,
   }).then(() => {
     TranEmailApi.sendTransacEmail({
@@ -52,11 +58,12 @@ exports.forgetPassword = (req, res) => {
 
 exports.resetpassword = (req, res) => {
   const Uid = req.params.uid;
-  console.log(`uidis${Uid}`)
-  ForgetPassword.findOne({ where: { id:Uid } }).then((forgotpasswordrequest) => {
-    if (forgotpasswordrequest) {
-      forgotpasswordrequest.update({ active: false });
-      res.status(200).send(`<html>
+  console.log(`uidis${Uid}`);
+  ForgetPassword.findOne({ where: { id: Uid } }).then(
+    (forgotpasswordrequest) => {
+      if (forgotpasswordrequest) {
+        forgotpasswordrequest.update({ active: false });
+        res.status(200).send(`<html>
                                     <script>
                                         function formsubmitted(e){
                                             e.preventDefault();
@@ -69,9 +76,10 @@ exports.resetpassword = (req, res) => {
                                         <button>reset password</button>
                                     </form>
                                 </html>`);
-      res.end();
+        res.end();
+      }
     }
-  });
+  );
 };
 
 exports.updatepassword = (req, res) => {
@@ -80,10 +88,10 @@ exports.updatepassword = (req, res) => {
     console.log(`newpass-${newpassword}`);
 
     const { resetpasswordid } = req.params;
-console.log(`reset id-${resetpasswordid}`)
+    console.log(`reset id-${resetpasswordid}`);
     ForgetPassword.findOne({ where: { id: resetpasswordid } }).then(
       (resetpasswordrequest) => {
-        console.log(resetpasswordrequest)
+        console.log(resetpasswordrequest);
         User.findOne({ where: { id: resetpasswordrequest.UserId } }).then(
           (user) => {
             if (user) {

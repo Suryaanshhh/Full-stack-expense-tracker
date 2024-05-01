@@ -43,17 +43,17 @@ window.addEventListener("DOMContentLoaded", () => {
     button.textContent = text;
     button.className = "pagination-button";
     button.onclick = onClick;
-    button.style.backgroundColor = "#4a5568"; // Dark gray
-    button.style.color = "#fff"; // White text
-    button.style.padding = "0.5rem 0.75rem"; // Padding
-    button.style.borderRadius = "0.25rem"; // Rounded corners
-    button.style.cursor = "pointer"; // Cursor pointer
-    button.style.margin = "0 0.25rem"; // Margin between buttons
+    button.style.backgroundColor = "#4a5568"; 
+    button.style.color = "#fff"; 
+    button.style.padding = "0.5rem 0.75rem"; 
+    button.style.borderRadius = "0.25rem"; 
+    button.style.cursor = "pointer";
+    button.style.margin = "0 0.25rem"; 
     button.addEventListener("mouseenter", () => {
-      button.style.backgroundColor = "#2d3748"; // Darker gray on hover
+      button.style.backgroundColor = "#2d3748";
     });
     button.addEventListener("mouseleave", () => {
-      button.style.backgroundColor = "#4a5568"; // Dark gray on mouse leave
+      button.style.backgroundColor = "#4a5568"; 
     });
     return button;
   }
@@ -165,11 +165,8 @@ function showUrl(Links) {
   const parent = document.getElementById("listofUrl");
   console.log(parent);
   const child = document.createElement("li");
-  const CloseBtn = document.createElement("button");
-  CloseBtn.innerText = "Close";
   child.textContent = `Already Downloaded -${Links.Link}`;
   parent.appendChild(child);
-  parent.appendChild(CloseBtn);
 }
 
 function showUser(expense) {
@@ -202,9 +199,7 @@ function showUser(expense) {
     axios
       .delete(`http://localhost:3000/delete-expense/${list.id}`)
       .then(() => {
-        //const child = document.getElementById("list.id");
-        //Expense.removeChild(child);
-        //console.log("refresh ho raha");
+        
         location.reload();
       })
       .catch((err) => {
@@ -222,8 +217,7 @@ Premium.addEventListener("click", function (event) {
       headers: { Authorisation: token },
     })
     .then((response) => {
-      //console.log("jhatu code");
-      //console.log(response);
+      
       var options = {
         key: response.data.key_id,
         order_id: response.data.order.id,
@@ -240,7 +234,6 @@ Premium.addEventListener("click", function (event) {
             .then((response) => {
               alert("You are premium user now");
               premiumUserUi();
-              //console.log("remove ho jao")
               localStorage.setItem("token", response.data.token);
               showLeaderBoard();
             })

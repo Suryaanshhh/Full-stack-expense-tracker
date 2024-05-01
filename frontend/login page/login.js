@@ -29,5 +29,5 @@ const forgetBTN = document.getElementById("forgot-password");
 forgetBTN.addEventListener("click", function (e) {
   e.preventDefault();
   console.log("test");
-  window.location.href = "../forget -pass/forget.html";
+  window.location.href = './forget -pass/forget.html'
 });
