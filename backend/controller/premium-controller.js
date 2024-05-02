@@ -2,6 +2,7 @@ const User = require("../model/user");
 const jwt = require("jsonwebtoken");
 const RazorPay = require("razorpay");
 const Order = require("../model/orders");
+require('dotenv').config()
 
 function generateAccessToken(id, premium) {
   return jwt.sign(
@@ -14,8 +15,8 @@ exports.PurchasePremium = (req, res, next) => {
   const uId = req.user.id;
   try {
     var rzp = new RazorPay({
-      key_id: process.env.KEY_ID,
-      key_secret: process.env.KEY_SECRET,
+      key_id: process.env.key_id,
+      key_secret: process.env.key_secret
     });
     const amount = 6900;
     rzp.orders.create({ amount, currency: "INR" }, (err, order) => {
