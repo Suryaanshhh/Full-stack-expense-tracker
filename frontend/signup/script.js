@@ -12,9 +12,9 @@ submitBtn.addEventListener('click',function(event){
         password:password
     }
     if(name&&email&&password){
-        axios.post('http://localhost:3000/register-user',RegisterUser).then((response)=>{
+        axios.post('http://16.170.98.135:3000/register-user',RegisterUser).then((response)=>{
         console.log(response)
-        window.location.href="../login page/login.html"
+        window.location.href="../login/login.html"
     }).catch(err=>console.log(err))
     }
     else{

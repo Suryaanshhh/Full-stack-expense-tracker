@@ -27,14 +27,23 @@ const accessLogStream = fs.createWriteStream(
 );
 
 app.use(cors());
-app.use(helmet());
+app.use(helmet({contentSecurityPolicy: false}));
 app.use(compression());
 app.use(morgan("combined",{stream:accessLogStream}));
 //Route Configuration
+
+app.use((req,res)=>{
+  console.log(`url is ${req.url}`)
+  res.sendFile(path.join(__dirname,`frontend${req.url}`))
+})
+
+
 app.use(UserRoute);
 app.use(forgetPass);
 app.use(expenseRoute);
 app.use(premiumRoute);
+
+
 
 //schema Relations
 User.hasMany(Expense);
