@@ -32,18 +32,16 @@ app.use(compression());
 app.use(morgan("combined",{stream:accessLogStream}));
 //Route Configuration
 
-app.use((req,res)=>{
-  console.log(`url is ${req.url}`)
-  res.sendFile(path.join(__dirname,`frontend${req.url}`))
-})
-
 
 app.use(UserRoute);
 app.use(forgetPass);
 app.use(expenseRoute);
 app.use(premiumRoute);
 
-
+app.use((req,res)=>{
+  console.log(`url is ${req.url}`)
+  res.sendFile(path.join(__dirname,`frontend${req.url}`))
+})
 
 //schema Relations
 User.hasMany(Expense);
