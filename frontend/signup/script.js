@@ -12,7 +12,7 @@ submitBtn.addEventListener("click", function (event) {
   };
   if (name && email && password) {
     axios
-      .post("http://16.171.235.235:3000/register-user", RegisterUser)
+      .post("http://16.170.71.187:3000/register-user", RegisterUser)
       .then((response) => {
         console.log(response);
         window.location.href = "../login/login.html";
