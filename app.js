@@ -25,9 +25,8 @@ const accessLogStream = fs.createWriteStream(
     flags: "a",
   }
 );
-
-app.use(cors());
 app.use(helmet({contentSecurityPolicy: false}));
+app.use(cors());
 app.use(compression());
 app.use(morgan("combined",{stream:accessLogStream}));
 //Route Configuration

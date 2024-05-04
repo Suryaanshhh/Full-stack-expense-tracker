@@ -8,7 +8,7 @@ BTN.addEventListener('click',function(e){
     const user={
         mail:mail
     }
-    axios.post('http://16.170.98.135:3000/forget-password',user,{
+    axios.post('http://13.51.161.242:3000/forget-password',user,{
         headers:{Authorisation:token}
     }).then((response)=>{
         console.log(response);

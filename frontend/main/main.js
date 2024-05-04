@@ -13,7 +13,7 @@ btn.addEventListener("click", function (event) {
   };
   const token = localStorage.getItem("token");
   axios
-    .post("http://16.170.98.135:3000/add-expense", Exp, {
+    .post("http://13.51.161.242:3000/add-expense", Exp, {
       headers: { Authorisation: token },
     })
     .then((response) => {
@@ -65,7 +65,7 @@ window.addEventListener("DOMContentLoaded", () => {
     Expense.innerHTML = "";
     axios
       .get(
-        `http://16.170.98.135:3000/get-expense?page=${page}&count=${count}`,
+        `http://13.51.161.242:3000/get-expense?page=${page}&count=${count}`,
         {
           headers: { Authorisation: token },
         }
@@ -131,7 +131,7 @@ function premiumUserUi() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     await axios
-      .get("http://16.170.98.135:3000/download-expense", {
+      .get("http://13.51.161.242:3000/download-expense", {
         headers: { Authorisation: token },
       })
       .then((response) => {
@@ -150,7 +150,7 @@ function premiumUserUi() {
         console.log(err);
       });
     axios
-      .get("http://16.170.98.135:3000/get-url", {
+      .get("http://13.51.161.242:3000/get-url", {
         headers: { Authorisation: token },
       })
       .then((result) => {
@@ -197,7 +197,7 @@ function showUser(expense) {
 
   delBTN.addEventListener("click", function () {
     axios
-      .delete(`http://16.170.98.135:3000/delete-expense/${list.id}`)
+      .delete(`http://13.51.161.242:3000/delete-expense/${list.id}`)
       .then(() => {
         
         location.reload();
@@ -213,7 +213,7 @@ const Premium = document.getElementById("Buy");
 Premium.addEventListener("click", function (event) {
   const token = localStorage.getItem("token");
   axios
-    .get("http://16.170.98.135:3000/Premium-Membership", {
+    .get("http://13.51.161.242:3000/Premium-Membership", {
       headers: { Authorisation: token },
     })
     .then((response) => {
@@ -224,7 +224,7 @@ Premium.addEventListener("click", function (event) {
         handler: function (response) {
           axios
             .post(
-              "http://16.170.98.135:3000/Transaction-Status",
+              "http://13.51.161.242:3000/Transaction-Status",
               {
                 order_id: options.order_id,
                 payment_id: response.razorpay_payment_id,
@@ -287,7 +287,7 @@ function showLeaderBoard() {
     const token = localStorage.getItem("token");
     try {
       const LeaderboardArray = await axios.get(
-        "http://16.170.98.135:3000/showLeaderBoard",
+        "http://13.51.161.242:3000/showLeaderBoard",
         { headers: { Authorisation: token } }
       );
       console.log(LeaderboardArray);
