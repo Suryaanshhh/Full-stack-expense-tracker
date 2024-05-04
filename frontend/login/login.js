@@ -10,7 +10,7 @@ SubmitBtn.addEventListener("click", function (event) {
   };
 
   axios
-    .post(`http://13.51.161.242:3000/login-user/${login.email}`, login)
+    .post(`http://16.171.235.235:3000/login-user/${login.email}`, login)
     .then((response) => {
       console.log(response.data.token);
 

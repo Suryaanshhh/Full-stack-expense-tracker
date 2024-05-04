@@ -43,7 +43,7 @@ exports.forgetPassword = async (req, res) => {
       sender,
       to: recievers,
       subject: "Password Reset Mail",
-      textContent: `http://13.51.161.242:3000/reset-password/${uid}`,
+      textContent: `http://16.171.235.235:3000/reset-password/${uid}`,
     })
       .then((response) => {
         console.log(response);
