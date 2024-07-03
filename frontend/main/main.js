@@ -12,7 +12,8 @@ btn.addEventListener("click", function (event) {
     category: category,
   };
   const token = localStorage.getItem("token");
-  axios
+  if(Exp){
+    axios
     .post("http://16.170.71.187:3000/add-expense", Exp, {
       headers: { Authorisation: token },
     })
@@ -23,6 +24,10 @@ btn.addEventListener("click", function (event) {
     .catch((Err) => {
       console.log(Err);
     });
+  }
+  else {
+    alert("Fill all fields properly")
+  }
 });
 window.addEventListener("DOMContentLoaded", () => {
   const Expense = document.getElementById("Expense");

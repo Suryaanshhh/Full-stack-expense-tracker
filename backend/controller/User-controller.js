@@ -35,6 +35,7 @@ exports.Login = (req, res, next) => {
   // console.log(`firts pass is ${password}`);
   User.findAll({ where: { email: email } })
     .then((user) => {
+      
       if (user.length > 0) {
         bcrypt.compare(password, user[0].password, (err, result) => {
           if (err) {
