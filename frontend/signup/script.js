@@ -12,7 +12,7 @@ submitBtn.addEventListener("click", function (event) {
   };
   if (name && email && password) {
     axios
-      .post("http://sql.freedb.tech:3306/register-user", RegisterUser)
+      .post("http://localhost:3000/register-user", RegisterUser)
       .then((response) => {
         console.log(response);
         alert("Signup Successfull");

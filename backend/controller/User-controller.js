@@ -12,6 +12,7 @@ exports.register = (req, res, next) => {
       name: name,
       email: email,
       password: hash,
+      premium:false,
       total: 0,
     })
       .then((data) => {
@@ -33,7 +34,7 @@ exports.Login = (req, res, next) => {
   const email = req.params.email;
   const password = req.body.password;
   // console.log(`firts pass is ${password}`);
-  User.findAll({ where: { email: email } })
+  User.find({email:email})
     .then((user) => {
       
       if (user.length > 0) {

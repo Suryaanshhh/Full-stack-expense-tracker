@@ -10,7 +10,7 @@ SubmitBtn.addEventListener("click", function (event) {
   };
 
   axios
-    .post(`http://16.170.71.187:3000/login-user/${login.email}`, login)
+    .post(`http://localhost:3000/login-user/${login.email}`, login)
     .then((response) => {
       console.log(response);
       if(response.status == 201) {
