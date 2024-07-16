@@ -144,8 +144,8 @@ function premiumUserUi() {
 
         if (response.status == 200) {
           var a = document.createElement("a");
-          a.href = response.data.fileURl;
-          a.download = "myexpense.csv";
+          a.href = response.data.fileURl.url;
+          a.download = "myexpense.txt";
           a.click();
         } else {
           throw new Error("Server Error");
@@ -177,7 +177,7 @@ function showUrl(Links) {
 function showUser(expense) {
   const list = document.createElement("li");
   const delBTN = document.createElement("button");
-  list.id = `${expense.id}`;
+  list.id = `${expense._id}`;
   console.log(expense.id);
   delBTN.innerText = "Delete";
   delBTN.style.color = "lightgray";

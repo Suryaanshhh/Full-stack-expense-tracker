@@ -8,7 +8,8 @@ const ForgetPassword = require("../model/ForgotPasswordRequests");
 
 exports.forgetPassword = async (req, res) => {
   const mail = req.body.mail;
-  const user = await User.findOne({ where: { email:mail } });
+  const user = await User.findOne({email:mail});
+  //console.log(user)
   if (!user) {
     return res.status(404).json({
       message: "This Email is not registered",
@@ -24,7 +25,7 @@ exports.forgetPassword = async (req, res) => {
   const TranEmailApi = new Sib.TransactionalEmailsApi();
 
   const sender = {
-    email: "suryanshdwivedi615@gmail.com",
+    email: "jaimelannister232@gmail.com",
   };
   const recievers = [
     {
@@ -32,11 +33,11 @@ exports.forgetPassword = async (req, res) => {
     },
   ];
   const uid = uuidv4();
-  const UId = user.dataValues.id
-  console.log(`id is -------${UId}`);
+ const UId = user._id
+  //console.log(`id is -------${user}`);
   ForgetPassword.create({
     id: uid,
-   UserId: UId,
+   userId: UId,
     active: true,
   }).then(() => {
     TranEmailApi.sendTransacEmail({
@@ -59,10 +60,10 @@ exports.forgetPassword = async (req, res) => {
 exports.resetpassword = (req, res) => {
   const Uid = req.params.uid;
   console.log(`uidis${Uid}`);
-  ForgetPassword.findOne({ where: { id: Uid } }).then(
+  ForgetPassword.find({id:Uid}).then(
     (forgotpasswordrequest) => {
       if (forgotpasswordrequest) {
-        forgotpasswordrequest.update({ active: false });
+        forgotpasswordrequest[0].updateOne({ active: false });
         res.status(200).send(`<html>
                                     <script>
                                         function formsubmitted(e){
@@ -89,10 +90,10 @@ exports.updatepassword = (req, res) => {
 
     const { resetpasswordid } = req.params;
     console.log(`reset id-${resetpasswordid}`);
-    ForgetPassword.findOne({ where: { id: resetpasswordid } }).then(
+    ForgetPassword.findOne({id:resetpasswordid}).then(
       (resetpasswordrequest) => {
         console.log(resetpasswordrequest);
-        User.findOne({ where: { id: resetpasswordrequest.UserId } }).then(
+        User.findOne( {_id: resetpasswordrequest.userId }).then(
           (user) => {
             if (user) {
               const saltRounds = 10;
@@ -106,7 +107,7 @@ exports.updatepassword = (req, res) => {
                     console.log(err);
                     throw new Error(err);
                   }
-                  user.update({ password: hash }).then(() => {
+                  user.updateOne({ password: hash }).then(() => {
                     res
                       .status(201)
                       .json({ message: "Successfuly update the new password" });
@@ -115,7 +116,7 @@ exports.updatepassword = (req, res) => {
               });
             } else {
               return res
-                .status(404)
+               .status(404)
                 .json({ error: "No user Exists", success: false });
             }
           }

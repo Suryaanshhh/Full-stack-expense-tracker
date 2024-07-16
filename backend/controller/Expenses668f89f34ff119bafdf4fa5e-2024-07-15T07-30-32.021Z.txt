@@ -1,0 +1,1 @@
+[{"_id":"6694abba491762c42e5e524a","money":5000,"description":"shirt","category":"Clothes","userId":"668f89f34ff119bafdf4fa5e","__v":0}]

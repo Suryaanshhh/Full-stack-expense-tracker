@@ -11,9 +11,9 @@ const Mongoose = require("mongoose");
 // const Request = require("./backend/model/ForgotPasswordRequests");
 // const FileUrl = require("./backend/model/fileUrl");
 const UserRoute = require("./backend/routes/user-routes");
-// const premiumRoute = require("./backend/routes/premium-routes");
-// const forgetPass = require("./backend/routes/forget-pass-route");
-// const expenseRoute = require("./backend/routes/expense-Routes");
+ const premiumRoute = require("./backend/routes/premium-routes");
+ const forgetPass = require("./backend/routes/forget-pass-route");
+const expenseRoute = require("./backend/routes/expense-Routes");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
@@ -33,9 +33,9 @@ app.use(morgan("combined", { stream: accessLogStream }));
 //Route Configuration
 
 app.use(UserRoute);
-// app.use(forgetPass);
-// app.use(expenseRoute);
-// app.use(premiumRoute);
+app.use(forgetPass);
+ app.use(expenseRoute);
+app.use(premiumRoute);
 
 app.use((req, res) => {
   console.log(`url is ${req.url}`);
