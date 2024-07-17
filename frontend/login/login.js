@@ -10,14 +10,17 @@ SubmitBtn.addEventListener("click", function (event) {
   };
 
   axios
-    .post(`http://16.170.71.187:3000/login-user/${login.email}`, login)
+    .post(`http://localhost:3000/login-user/${login.email}`, login)
     .then((response) => {
-      console.log(response.data.token);
-
-      localStorage.setItem("token", response.data.token);
-      window.location.href = "../main/main.html";
+      console.log(response);
+      if(response.status == 201) {
+        alert("User Loggedin");
+        localStorage.setItem("token", response.data.token);
+        window.location.href = "../main/main.html";
+      }
     })
     .catch((err) => {
+      alert(err)
       console.log(err);
     });
   console.log(login.email);
@@ -29,5 +32,5 @@ const forgetBTN = document.getElementById("forgot-password");
 forgetBTN.addEventListener("click", function (e) {
   e.preventDefault();
   console.log("test");
-  window.location.href = './forget/forget.html'
+  window.location.href = "./forget/forget.html";
 });

@@ -1,17 +1,14 @@
-const { Sequelize, INTEGER } = require("sequelize");
 
-const sq = require("../util/database");
 
-const fileUrl=sq.define("URLS",{
-    id:{
-        type:Sequelize.INTEGER,
-        primaryKey:true,
-        allowNull:false,
-        autoIncrement:true
-    },
-    Link:{
-        type:Sequelize.STRING
-    }
+const { default: mongoose } = require("mongoose");
+const Mongoose=require("mongoose");
+
+const Schema=Mongoose.Schema;
+
+
+const fileSchema=new Schema({
+    Link:String,
+    userId:Schema.Types.ObjectId
 })
 
-module.exports=fileUrl
+module.exports=mongoose.model("FileUrl",fileSchema);

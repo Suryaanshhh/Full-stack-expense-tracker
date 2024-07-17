@@ -5,7 +5,7 @@ exports.authenticator = (req, res, next) => {
   try {
     const token = req.header("Authorisation");
     const user = jwt.verify(token, "magical-key-for-userAuthentication");
-    User.findByPk(user.userId)
+    User.findById(user.userId)
       .then((user) => {
         req.user = user;
         next();

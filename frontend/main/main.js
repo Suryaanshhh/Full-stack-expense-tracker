@@ -12,8 +12,9 @@ btn.addEventListener("click", function (event) {
     category: category,
   };
   const token = localStorage.getItem("token");
-  axios
-    .post("http://16.170.71.187:3000/add-expense", Exp, {
+  if(Exp){
+    axios
+    .post("http://localhost:3000/add-expense", Exp, {
       headers: { Authorisation: token },
     })
     .then((response) => {
@@ -23,6 +24,10 @@ btn.addEventListener("click", function (event) {
     .catch((Err) => {
       console.log(Err);
     });
+  }
+  else {
+    alert("Fill all fields properly")
+  }
 });
 window.addEventListener("DOMContentLoaded", () => {
   const Expense = document.getElementById("Expense");
@@ -65,7 +70,7 @@ window.addEventListener("DOMContentLoaded", () => {
     Expense.innerHTML = "";
     axios
       .get(
-        `http://16.170.71.187:3000/get-expense?page=${page}&count=${count}`,
+        `http://localhost:3000/get-expense?page=${page}&count=${count}`,
         {
           headers: { Authorisation: token },
         }
@@ -131,7 +136,7 @@ function premiumUserUi() {
     e.preventDefault();
     const token = localStorage.getItem("token");
     await axios
-      .get("http://16.170.71.187:3000/download-expense", {
+      .get("http://localhost:3000/download-expense", {
         headers: { Authorisation: token },
       })
       .then((response) => {
@@ -139,8 +144,8 @@ function premiumUserUi() {
 
         if (response.status == 200) {
           var a = document.createElement("a");
-          a.href = response.data.fileURl;
-          a.download = "myexpense.csv";
+          a.href = response.data.fileURl.url;
+          a.download = "myexpense.txt";
           a.click();
         } else {
           throw new Error("Server Error");
@@ -150,7 +155,7 @@ function premiumUserUi() {
         console.log(err);
       });
     axios
-      .get("http://16.170.71.187:3000/get-url", {
+      .get("http://localhost:3000/get-url", {
         headers: { Authorisation: token },
       })
       .then((result) => {
@@ -172,7 +177,7 @@ function showUrl(Links) {
 function showUser(expense) {
   const list = document.createElement("li");
   const delBTN = document.createElement("button");
-  list.id = `${expense.id}`;
+  list.id = `${expense._id}`;
   console.log(expense.id);
   delBTN.innerText = "Delete";
   delBTN.style.color = "lightgray";
@@ -197,7 +202,7 @@ function showUser(expense) {
 
   delBTN.addEventListener("click", function () {
     axios
-      .delete(`http://16.170.71.187:3000/delete-expense/${list.id}`)
+      .delete(`http://localhost:3000/delete-expense/${list.id}`)
       .then(() => {
         
         location.reload();
@@ -213,7 +218,7 @@ const Premium = document.getElementById("Buy");
 Premium.addEventListener("click", function (event) {
   const token = localStorage.getItem("token");
   axios
-    .get("http://16.170.71.187:3000/Premium-Membership", {
+    .get("http://localhost:3000/Premium-Membership", {
       headers: { Authorisation: token },
     })
     .then((response) => {
@@ -224,7 +229,7 @@ Premium.addEventListener("click", function (event) {
         handler: function (response) {
           axios
             .post(
-              "http://16.170.71.187:3000/Transaction-Status",
+              "http://localhost:3000/Transaction-Status",
               {
                 order_id: options.order_id,
                 payment_id: response.razorpay_payment_id,
@@ -287,7 +292,7 @@ function showLeaderBoard() {
     const token = localStorage.getItem("token");
     try {
       const LeaderboardArray = await axios.get(
-        "http://16.170.71.187:3000/showLeaderBoard",
+        "http://localhost:3000/showLeaderBoard",
         { headers: { Authorisation: token } }
       );
       console.log(LeaderboardArray);
